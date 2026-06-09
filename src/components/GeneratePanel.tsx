@@ -13,6 +13,7 @@ interface GeneratePanelProps {
 
 export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePanelProps) {
   const [characterName, setCharacterName] = useState('')
+  const [companyName, setCompanyName]   = useState('')
   const [service, setService]     = useState(SERVICES[0].id)
   const [category, setCategory]   = useState(CATEGORIES[0].id)
   const [occasion, setOccasion]   = useState(OCCASIONS[0])
@@ -30,6 +31,7 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
       categoryId:    category,
       occasion,
       toneId:        tone,
+      companyName:   companyName.trim() || undefined,
     }
   }
 
@@ -48,6 +50,7 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
           category:  input.categoryId,
           occasion:  input.occasion,
           tone:      input.toneId,
+          company:   input.companyName,
         })
         const post = createAIPost(text, input)
         saveToHistory(post)
@@ -88,7 +91,15 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
           style={styles.input}
         />
 
-        <SectionTitle n="02" title="Serviço" />
+        <SectionTitle n="02" title="Nome da sua empresa" />
+        <input
+          value={companyName}
+          onChange={e => setCompanyName(e.target.value)}
+          placeholder="Ex: Festas Mágicas, Locação Star, Animações XYZ..."
+          style={styles.input}
+        />
+
+        <SectionTitle n="03" title="Serviço" />
         <div style={styles.chipRow}>
           {SERVICES.map(s => (
             <Chip key={s.id} active={service === s.id} onClick={() => setService(s.id)}>
@@ -97,7 +108,7 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
           ))}
         </div>
 
-        <SectionTitle n="03" title="Tipo de post" />
+        <SectionTitle n="04" title="Tipo de post" />
         <div style={styles.chipRow}>
           {CATEGORIES.map(c => (
             <Chip key={c.id} active={category === c.id} onClick={() => setCategory(c.id)}>
@@ -106,7 +117,7 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
           ))}
         </div>
 
-        <SectionTitle n="04" title="Ocasião" />
+        <SectionTitle n="05" title="Ocasião" />
         <div style={styles.chipRow}>
           {OCCASIONS.map(o => (
             <Chip key={o} active={occasion === o} onClick={() => setOccasion(o)}>
@@ -115,7 +126,7 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
           ))}
         </div>
 
-        <SectionTitle n="05" title="Tom de voz" />
+        <SectionTitle n="06" title="Tom de voz" />
         <div style={styles.chipRow}>
           {TONES.map(t => (
             <Chip key={t.id} active={tone === t.id} onClick={() => setTone(t.id)}>

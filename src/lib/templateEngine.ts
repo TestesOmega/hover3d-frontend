@@ -14,6 +14,8 @@ export interface PostInput {
   categoryId:    string
   occasion:      string
   toneId:        string
+  companyName?:  string
+  region?:       string
 }
 
 export interface GeneratedPost {
@@ -53,11 +55,11 @@ function rand<T>(arr: T[]): T {
 
 const TEMPLATES: Record<string, string[]> = {
   promocional: [
-    `✨ Sua {O} merece um toque de magia!\n\nO {C} está disponível e vai transformar o seu evento em um momento inesquecível. 🎉\n\nChame a {E} e garanta a presença do personagem favorito da criançada!\n\n📍 Atendemos em toda a {R}\n📲 Orçamento sem compromisso no Direct`,
+    `✨ {O} merece um toque de magia!\n\nO {C} está disponível e vai transformar o seu evento em um momento inesquecível. 🎉\n\nChame a {E} e garanta a presença do personagem favorito da criançada!\n\n📍 Atendemos em toda a {R}\n📲 Orçamento sem compromisso no Direct`,
 
-    `🎭 Quem aí quer o {C} na próxima {O}?\n\nNa {E} a gente realiza sonhos! Diversão garantida do início ao fim, com qualidade que faz a diferença.\n\n👉 Reserve já a sua data\n📲 Fale com a gente agora`,
+    `🎭 Quem aí quer o {C} em {O}?\n\nNa {E} a gente realiza sonhos! Diversão garantida do início ao fim, com qualidade que faz a diferença.\n\n👉 Reserve já a sua data\n📲 Fale com a gente agora`,
 
-    `O segredo de uma {O} inesquecível? 🤔\n\nUm personagem que encanta de verdade! O {C} chega pra deixar tudo mais especial. ✨\n\n{E} — porque cada detalhe importa.\n📲 Solicite seu orçamento`,
+    `O segredo de um {O} inesquecível? 🤔\n\nUm personagem que encanta de verdade! O {C} chega pra deixar tudo mais especial. ✨\n\n{E} — porque cada detalhe importa.\n📲 Solicite seu orçamento`,
   ],
 
   bastidor: [
@@ -69,19 +71,19 @@ const TEMPLATES: Record<string, string[]> = {
   ],
 
   depoimento: [
-    `⭐⭐⭐⭐⭐\n\n"A presença do {C} foi o ponto alto da nossa {O}! As crianças amaram e o atendimento da {E} foi impecável."\n\nÉ por momentos assim que a gente faz o que faz! 💛\n📲 Faça como nossos clientes — chame no Direct`,
+    `⭐⭐⭐⭐⭐\n\n"A presença do {C} foi o destaque de {O}! As crianças amaram e o atendimento da {E} foi impecável."\n\nÉ por momentos assim que a gente faz o que faz! 💛\n📲 Faça como nossos clientes — chame no Direct`,
 
-    `Nada como a alegria de um cliente satisfeito! 💛\n\nO {C} marcou presença e fez a {O} virar memória pra vida toda. Obrigado pela confiança! 🙏\n\n{E} — realizando sonhos de verdade.\n📲 Solicite seu orçamento`,
+    `Nada como a alegria de um cliente satisfeito! 💛\n\nO {C} marcou presença e fez o {O} virar memória pra vida toda. Obrigado pela confiança! 🙏\n\n{E} — realizando sonhos de verdade.\n📲 Solicite seu orçamento`,
   ],
 
   engajamento: [
-    `🤔 ENQUETE!\n\nSe você fosse contratar um personagem pra sua {O}, qual seria?\n\n🐰 {C}\n🎭 Outro personagem\n\nComenta aqui embaixo! 👇\n\nE se quiser ver a magia de perto, a {E} tá aqui pra ajudar. 📲`,
+    `🤔 ENQUETE!\n\nSe você fosse contratar um personagem para {O}, qual seria?\n\n🐰 {C}\n🎭 Outro personagem\n\nComenta aqui embaixo! 👇\n\nE se quiser ver a magia de perto, a {E} tá aqui pra ajudar. 📲`,
 
     `Responde rápido! 💬\n\nQual o personagem favorito da criançada aí na sua casa?\n\nO {C} costuma ser campeão de pedidos aqui na {E}! 🏆\n\nConta pra gente nos comentários 👇`,
   ],
 
   datas: [
-    `📅 Data especial chegando!\n\nQue tal tornar sua {O} ainda mais mágica com a presença do {C}? ✨\n\nNa {E}, cada comemoração vira um momento único.\n📲 Garanta sua data antes que esgote!`,
+    `📅 Data especial chegando!\n\nQue tal tornar o seu {O} ainda mais especial com a presença do {C}? ✨\n\nNa {E}, cada comemoração vira um momento único.\n📲 Garanta sua data antes que esgote!`,
 
     `Toda comemoração merece ser inesquecível! 🎉\n\nO {C} deixa qualquer {O} com aquele toque especial. Na {E} a gente cuida de tudo pra você. 💛\n📲 Reserve agora`,
   ],
@@ -110,12 +112,15 @@ export function generateTemplatePost(input: PostInput): GeneratedPost {
   const pool = TEMPLATES[input.categoryId] ?? TEMPLATES.promocional
   let text = rand(pool)
 
+  const companyName = input.companyName?.trim() || BRAND.company.name
+  const region      = input.region?.trim()      || BRAND.company.region
+
   text = text
     .replaceAll('{C}', input.characterName)
     .replaceAll('{S}', input.serviceName)
     .replaceAll('{O}', input.occasion)
-    .replaceAll('{E}', BRAND.company.name)
-    .replaceAll('{R}', BRAND.company.region)
+    .replaceAll('{E}', companyName)
+    .replaceAll('{R}', region)
 
   const tweak = TONE_TWEAKS[input.toneId]
   if (tweak) text = tweak(text)

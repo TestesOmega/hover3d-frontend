@@ -22,17 +22,19 @@ interface WeekPlannerProps {
 }
 
 export default function WeekPlanner({ aiEnabled, onConsumeCredit }: WeekPlannerProps) {
-  const [character, setCharacter] = useState('')
-  const [service, setService]     = useState('')
-  const [posts, setPosts]         = useState<{ day: string; post: GeneratedPost }[]>([])
+  const [character, setCharacter]   = useState('')
+  const [service, setService]       = useState('')
+  const [company, setCompany]       = useState('')
+  const [posts, setPosts]           = useState<{ day: string; post: GeneratedPost }[]>([])
   const [generating, setGenerating] = useState(false)
 
   async function handleGenerateWeek() {
     if (!character.trim()) return
     setGenerating(true)
 
-    const charName = character.trim()
-    const svcName  = service.trim() || 'serviço'
+    const charName    = character.trim()
+    const svcName     = service.trim() || 'serviço'
+    const companyName = company.trim() || undefined
 
     if (aiEnabled) {
       for (let i = 0; i < 7; i++) {
@@ -42,8 +44,8 @@ export default function WeekPlanner({ aiEnabled, onConsumeCredit }: WeekPlannerP
         const results = await Promise.all(
           WEEK_PLAN.map(({ day, categoryId }) => {
             const occasion = OCCASIONS[Math.floor(Math.random() * OCCASIONS.length)]
-            const input = { characterName: charName, serviceName: svcName, serviceId: 'locacao', categoryId, occasion, toneId: 'animado' }
-            return generateWithAI({ character: charName, service: svcName, category: categoryId, occasion, tone: 'animado' })
+            const input = { characterName: charName, serviceName: svcName, serviceId: 'locacao', categoryId, occasion, toneId: 'animado', companyName }
+            return generateWithAI({ character: charName, service: svcName, category: categoryId, occasion, tone: 'animado', company: companyName })
               .then(text => {
                 const post = createAIPost(text, input)
                 saveToHistory(post)
@@ -63,7 +65,7 @@ export default function WeekPlanner({ aiEnabled, onConsumeCredit }: WeekPlannerP
 
     const generated = WEEK_PLAN.map(({ day, categoryId }) => {
       const occasion = OCCASIONS[Math.floor(Math.random() * OCCASIONS.length)]
-      const post = generateTemplatePost({ characterName: charName, serviceName: svcName, serviceId: 'locacao', categoryId, occasion, toneId: 'animado' })
+      const post = generateTemplatePost({ characterName: charName, serviceName: svcName, serviceId: 'locacao', categoryId, occasion, toneId: 'animado', companyName })
       saveToHistory(post)
       return { day, post }
     })
@@ -92,6 +94,15 @@ export default function WeekPlanner({ aiEnabled, onConsumeCredit }: WeekPlannerP
             value={character}
             onChange={e => setCharacter(e.target.value)}
             placeholder="Ex: Homem-Aranha, Elsa, Produto X..."
+          />
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Nome da empresa</label>
+          <input
+            style={styles.input}
+            value={company}
+            onChange={e => setCompany(e.target.value)}
+            placeholder="Ex: Festas Mágicas, Locação Star..."
           />
         </div>
         <div style={styles.inputGroup}>

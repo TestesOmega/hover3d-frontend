@@ -8,6 +8,8 @@ export interface GeneratePayload {
   category:  string
   occasion:  string
   tone:      string
+  company?:  string
+  region?:   string
 }
 
 export async function generateWithAI(payload: GeneratePayload): Promise<string> {
