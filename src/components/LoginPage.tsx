@@ -121,67 +121,93 @@ export function LoginPage() {
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, margin: 0 }}>{subtitle}</p>
         </div>
 
-        <form onSubmit={handle} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <input
-            type="email" placeholder="E-mail" value={email}
-            onChange={e => setEmail(e.target.value)}
-            onFocus={() => setFocusedInput('email')} onBlur={() => setFocusedInput(null)}
-            required style={inputStyle('email')}
-          />
+        {/* Tela de sucesso — substitui o formulário inteiro */}
+        {success ? (
+          <div style={{ textAlign: 'center', padding: '8px 0' }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: '50%',
+              background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 30, margin: '0 auto 20px',
+            }}>✅</div>
+            <h2 style={{ color: '#f1f0ff', fontSize: 18, fontWeight: 700, margin: '0 0 12px' }}>
+              {mode === 'forgot' ? 'Link enviado!' : 'Conta criada!'}
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, lineHeight: 1.6, margin: '0 0 8px' }}>
+              {mode === 'forgot'
+                ? <>Enviamos um link para <strong style={{ color: '#a78bfa' }}>{email}</strong>.<br />Clique nele para redefinir sua senha.</>
+                : <>Enviamos um e-mail de confirmação para <strong style={{ color: '#a78bfa' }}>{email}</strong>.<br />Acesse sua caixa de entrada e clique no link para <strong>ativar sua conta</strong>.</>
+              }
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, marginTop: 16 }}>
+              Não encontrou? Verifique a pasta de spam.
+            </p>
+            <button onClick={() => switchMode('login')} style={{
+              marginTop: 24, padding: '11px 24px', borderRadius: 10, border: 'none',
+              background: 'rgba(139,92,246,0.2)', color: '#a78bfa',
+              fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            }}>
+              Voltar ao login
+            </button>
+          </div>
+        ) : (
+          <>
+            <form onSubmit={handle} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <input
+                type="email" placeholder="E-mail" value={email}
+                onChange={e => setEmail(e.target.value)}
+                onFocus={() => setFocusedInput('email')} onBlur={() => setFocusedInput(null)}
+                required style={inputStyle('email')}
+              />
 
-          {mode !== 'forgot' && (
-            <input
-              type="password" placeholder="Senha" value={password}
-              onChange={e => setPassword(e.target.value)}
-              onFocus={() => setFocusedInput('password')} onBlur={() => setFocusedInput(null)}
-              required style={inputStyle('password')}
-            />
-          )}
+              {mode !== 'forgot' && (
+                <input
+                  type="password" placeholder="Senha" value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  onFocus={() => setFocusedInput('password')} onBlur={() => setFocusedInput(null)}
+                  required style={inputStyle('password')}
+                />
+              )}
 
-          {/* Link esqueci senha — só no modo login */}
-          {mode === 'login' && (
-            <div style={{ textAlign: 'right', marginTop: -4 }}>
-              <span onClick={() => switchMode('forgot')}
-                style={{ fontSize: 12.5, color: '#a78bfa', cursor: 'pointer' }}>
-                Esqueci minha senha
-              </span>
+              {mode === 'login' && (
+                <div style={{ textAlign: 'right', marginTop: -4 }}>
+                  <span onClick={() => switchMode('forgot')}
+                    style={{ fontSize: 12.5, color: '#a78bfa', cursor: 'pointer' }}>
+                    Esqueci minha senha
+                  </span>
+                </div>
+              )}
+
+              {error && (
+                <div style={{ padding: '10px 14px', borderRadius: 8, background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.25)', color: '#fca5a5', fontSize: 13 }}>
+                  {error}
+                </div>
+              )}
+
+              <button type="submit" disabled={loading} style={{
+                marginTop: 4, padding: '13px', borderRadius: 10, border: 'none',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                background: loading ? 'rgba(124,58,237,0.4)' : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                color: '#fff', fontSize: 15, fontWeight: 600, letterSpacing: 0.2,
+                boxShadow: loading ? 'none' : '0 4px 20px rgba(124,58,237,0.4)',
+              }}>
+                {loading ? 'Aguarde...' : mode === 'login' ? 'Entrar' : mode === 'register' ? 'Criar conta' : 'Enviar link de redefinição'}
+              </button>
+            </form>
+
+            <div style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>
+              {mode === 'login' && (
+                <>Não tem conta? <span onClick={() => switchMode('register')} style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}>Cadastre-se</span></>
+              )}
+              {mode === 'register' && (
+                <>Já tem conta? <span onClick={() => switchMode('login')} style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}>Entrar</span></>
+              )}
+              {mode === 'forgot' && (
+                <span onClick={() => switchMode('login')} style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}>← Voltar ao login</span>
+              )}
             </div>
-          )}
-
-          {error && (
-            <div style={{ padding: '10px 14px', borderRadius: 8, background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.25)', color: '#fca5a5', fontSize: 13 }}>
-              {error}
-            </div>
-          )}
-          {success && (
-            <div style={{ padding: '10px 14px', borderRadius: 8, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)', color: '#86efac', fontSize: 13 }}>
-              {success}
-            </div>
-          )}
-
-          <button type="submit" disabled={loading} style={{
-            marginTop: 4, padding: '13px', borderRadius: 10, border: 'none',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            background: loading ? 'rgba(124,58,237,0.4)' : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-            color: '#fff', fontSize: 15, fontWeight: 600, letterSpacing: 0.2,
-            boxShadow: loading ? 'none' : '0 4px 20px rgba(124,58,237,0.4)',
-          }}>
-            {loading ? 'Aguarde...' : mode === 'login' ? 'Entrar' : mode === 'register' ? 'Criar conta' : 'Enviar link de redefinição'}
-          </button>
-        </form>
-
-        {/* Links de navegação entre modos */}
-        <div style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>
-          {mode === 'login' && (
-            <>Não tem conta? <span onClick={() => switchMode('register')} style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}>Cadastre-se</span></>
-          )}
-          {mode === 'register' && (
-            <>Já tem conta? <span onClick={() => switchMode('login')} style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}>Entrar</span></>
-          )}
-          {mode === 'forgot' && (
-            <span onClick={() => switchMode('login')} style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}>← Voltar ao login</span>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
   )
