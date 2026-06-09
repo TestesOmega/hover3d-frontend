@@ -75,6 +75,19 @@ export interface Profile {
 
 export const fetchProfile = (): Promise<Profile> => apiFetch('/api/profile')
 
+// ── Notificações ─────────────────────────────────────────────
+
+export interface NotificationSettings {
+  notification_email:    string
+  notification_accepted: boolean
+}
+
+export const getNotification = (): Promise<NotificationSettings> =>
+  apiFetch('/api/notification')
+
+export const saveNotification = (data: NotificationSettings): Promise<NotificationSettings> =>
+  apiFetch('/api/notification', { method: 'PUT', body: JSON.stringify(data) })
+
 // ── Eventos ──────────────────────────────────────────────────
 
 export const getEvents   = ():                 Promise<Event[]> => apiFetch('/api/events')

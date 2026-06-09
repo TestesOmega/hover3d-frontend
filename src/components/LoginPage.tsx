@@ -8,6 +8,16 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [mouse, setMouse] = useState({ x: 50, y: 50 })
+  const [focusedInput, setFocusedInput] = useState<string | null>(null)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setMouse({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    })
+  }
 
   const handle = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,63 +35,188 @@ export function LoginPage() {
     setLoading(false)
   }
 
+  const inputStyle = (name: string): React.CSSProperties => ({
+    padding: '12px 16px',
+    borderRadius: 10,
+    border: `1px solid ${focusedInput === name ? 'rgba(139,92,246,0.7)' : 'rgba(255,255,255,0.08)'}`,
+    background: 'rgba(255,255,255,0.04)',
+    color: '#f1f0ff',
+    fontSize: 14,
+    outline: 'none',
+    width: '100%',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
+    boxShadow: focusedInput === name ? '0 0 0 3px rgba(139,92,246,0.15)' : 'none',
+  })
+
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'var(--bg)', fontFamily: 'var(--font-body)',
-    }}>
+    <div
+      onMouseMove={handleMouseMove}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#09090f',
+        fontFamily: 'var(--font-body)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Grid de fundo */}
       <div style={{
-        width: '100%', maxWidth: 400, padding: '40px 32px',
-        background: 'var(--bg-elevated)', border: '1px solid var(--border)',
-        borderRadius: 16,
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: [
+          'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px)',
+          'linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+        ].join(', '),
+        backgroundSize: '48px 48px',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Glow roxo seguindo o mouse */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: `radial-gradient(ellipse 700px 500px at ${mouse.x}% ${mouse.y}%, rgba(139,92,246,0.18) 0%, rgba(109,40,217,0.06) 45%, transparent 70%)`,
+        transition: 'background 0.08s ease',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Brilho fixo no canto inferior esquerdo */}
+      <div style={{
+        position: 'absolute',
+        bottom: '-80px',
+        left: '-80px',
+        width: 360,
+        height: 360,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(109,40,217,0.12) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Card */}
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: 420,
+        margin: '0 16px',
+        padding: '44px 40px',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(139,92,246,0.2)',
+        borderRadius: 24,
+        backdropFilter: 'blur(24px)',
+        boxShadow: [
+          '0 0 0 1px rgba(255,255,255,0.04) inset',
+          '0 4px 24px rgba(0,0,0,0.5)',
+          '0 0 60px rgba(139,92,246,0.08)',
+        ].join(', '),
       }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+
+        {/* Logo e título */}
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <div style={{
-            width: 48, height: 48, borderRadius: 12, background: 'var(--accent)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 24, margin: '0 auto 12px',
+            width: 56,
+            height: 56,
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 26,
+            fontWeight: 800,
+            color: '#fff',
+            margin: '0 auto 16px',
+            boxShadow: '0 0 24px rgba(124,58,237,0.45)',
+            letterSpacing: -1,
           }}>H</div>
-          <h1 style={{ color: 'var(--text)', fontSize: 22, fontWeight: 700, margin: 0 }}>Hover3D</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: '4px 0 0' }}>
-            {mode === 'login' ? 'Entre na sua conta' : 'Crie sua conta'}
+          <h1 style={{ color: '#f1f0ff', fontSize: 22, fontWeight: 700, margin: '0 0 6px', letterSpacing: -0.5 }}>
+            Hover3D
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, margin: 0 }}>
+            {mode === 'login' ? 'Entre na sua conta para continuar' : 'Crie sua conta gratuitamente'}
           </p>
         </div>
 
-        <form onSubmit={handle} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <form onSubmit={handle} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input
-            type="email" placeholder="E-mail" value={email}
-            onChange={e => setEmail(e.target.value)} required
-            style={{
-              padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)',
-              background: 'var(--bg-subtle)', color: 'var(--text)', fontSize: 14, outline: 'none',
-            }}
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            onFocus={() => setFocusedInput('email')}
+            onBlur={() => setFocusedInput(null)}
+            required
+            style={inputStyle('email')}
           />
           <input
-            type="password" placeholder="Senha" value={password}
-            onChange={e => setPassword(e.target.value)} required
-            style={{
-              padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)',
-              background: 'var(--bg-subtle)', color: 'var(--text)', fontSize: 14, outline: 'none',
-            }}
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            onFocus={() => setFocusedInput('password')}
+            onBlur={() => setFocusedInput(null)}
+            required
+            style={inputStyle('password')}
           />
 
-          {error && <p style={{ color: '#f87171', fontSize: 13, margin: 0 }}>{error}</p>}
-          {success && <p style={{ color: '#4ade80', fontSize: 13, margin: 0 }}>{success}</p>}
+          {error && (
+            <div style={{
+              padding: '10px 14px',
+              borderRadius: 8,
+              background: 'rgba(248,113,113,0.1)',
+              border: '1px solid rgba(248,113,113,0.25)',
+              color: '#fca5a5',
+              fontSize: 13,
+            }}>
+              {error}
+            </div>
+          )}
+          {success && (
+            <div style={{
+              padding: '10px 14px',
+              borderRadius: 8,
+              background: 'rgba(74,222,128,0.1)',
+              border: '1px solid rgba(74,222,128,0.25)',
+              color: '#86efac',
+              fontSize: 13,
+            }}>
+              {success}
+            </div>
+          )}
 
-          <button type="submit" disabled={loading} style={{
-            padding: '11px', borderRadius: 8, border: 'none', cursor: 'pointer',
-            background: 'var(--accent)', color: '#fff', fontSize: 15, fontWeight: 600,
-            opacity: loading ? 0.7 : 1,
-          }}>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              marginTop: 4,
+              padding: '13px',
+              borderRadius: 10,
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              background: loading
+                ? 'rgba(124,58,237,0.4)'
+                : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+              color: '#fff',
+              fontSize: 15,
+              fontWeight: 600,
+              letterSpacing: 0.2,
+              transition: 'opacity 0.2s, transform 0.1s',
+              boxShadow: loading ? 'none' : '0 4px 20px rgba(124,58,237,0.4)',
+            }}
+            onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.opacity = '0.9' }}
+            onMouseLeave={e => { (e.target as HTMLElement).style.opacity = '1' }}
+          >
             {loading ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar conta'}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: 20, color: 'var(--text-muted)', fontSize: 13 }}>
+        <p style={{ textAlign: 'center', marginTop: 24, color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
           {mode === 'login' ? 'Não tem conta? ' : 'Já tem conta? '}
           <span
             onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setSuccess('') }}
-            style={{ color: 'var(--accent)', cursor: 'pointer', fontWeight: 600 }}
+            style={{ color: '#a78bfa', cursor: 'pointer', fontWeight: 600 }}
           >
             {mode === 'login' ? 'Cadastre-se' : 'Entrar'}
           </span>
