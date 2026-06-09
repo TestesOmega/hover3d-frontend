@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Header, { Tab } from './components/Header'
 import GeneratePanel from './components/GeneratePanel'
@@ -6,19 +6,34 @@ import WeekPlanner from './components/WeekPlanner'
 import HistoryPanel from './components/HistoryPanel'
 import AgendaPanel from './components/AgendaPanel'
 import { LoginPage } from './components/LoginPage'
+import PaymentGate from './components/PaymentGate'
 import { useAuth } from './lib/AuthContext'
+import { fetchProfile, Profile } from './lib/api'
 
 // ── Configuração de plano (regra de negócio) ─────────────────
-const AI_ENABLED = false
-const MAX_CREDITS = 580   // ~R$29/mês com margem de 80% usando Haiku
+const AI_ENABLED    = false
+const MAX_CREDITS   = 580   // ~R$29/mês com margem de 80% usando Haiku
+const PAYMENT_GATE  = true  // ← false para ocultar durante demo/teste
 
 export default function App() {
   const { session, loading } = useAuth()
-  const [tab, setTab] = useState<Tab>('gerar')
+  const [tab, setTab]         = useState<Tab>('gerar')
   const [credits, setCredits] = useState(MAX_CREDITS)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [profileLoading, setProfileLoading] = useState(false)
 
-  if (loading) return null
+  useEffect(() => {
+    if (!session || !PAYMENT_GATE) return
+    setProfileLoading(true)
+    fetchProfile()
+      .then(setProfile)
+      .catch(() => setProfile({ ativo: true, plano: 'basico', vencimento: null }))
+      .finally(() => setProfileLoading(false))
+  }, [session])
+
+  if (loading || profileLoading) return null
   if (!session) return <LoginPage />
+  if (PAYMENT_GATE && profile && !profile.ativo) return <PaymentGate />
 
   function consumeCredit(): boolean {
     if (credits <= 0) return false

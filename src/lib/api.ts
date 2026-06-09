@@ -65,6 +65,18 @@ async function apiFetch(path: string, init?: RequestInit) {
   return res.json()
 }
 
+// ── Perfil ───────────────────────────────────────────────────
+
+export interface Profile {
+  ativo:      boolean
+  plano:      string
+  vencimento: string | null
+}
+
+export const fetchProfile = (): Promise<Profile> => apiFetch('/api/profile')
+
+// ── Eventos ──────────────────────────────────────────────────
+
 export const getEvents   = ():                 Promise<Event[]> => apiFetch('/api/events')
 export const deleteEvent = (id: string):       Promise<null>    => apiFetch(`/api/events/${id}`, { method: 'DELETE' })
 export const createEvent = (ev: EventCreate):  Promise<Event>   => apiFetch('/api/events', {
