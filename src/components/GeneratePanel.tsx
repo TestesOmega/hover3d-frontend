@@ -12,8 +12,7 @@ interface GeneratePanelProps {
 }
 
 export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePanelProps) {
-  const [character, setCharacter] = useState(CHARACTERS[0].id)
-  const [customChar, setCustomChar] = useState('')
+  const [characterName, setCharacterName] = useState('')
   const [service, setService]     = useState(SERVICES[0].id)
   const [category, setCategory]   = useState(CATEGORIES[0].id)
   const [occasion, setOccasion]   = useState(OCCASIONS[0])
@@ -23,13 +22,9 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
   const [generating, setGenerating] = useState(false)
 
   function buildInput(): PostInput {
-    const charObj = CHARACTERS.find(c => c.id === character)!
-    const charName = character === 'custom' && customChar.trim()
-      ? customChar.trim()
-      : charObj.name
     const svcObj = SERVICES.find(s => s.id === service)!
     return {
-      characterName: charName,
+      characterName: characterName.trim() || 'Personagem',
       serviceName:   svcObj.name,
       serviceId:     service,
       categoryId:    category,
@@ -84,22 +79,13 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
     <div style={styles.wrap}>
       {/* Coluna do formulário */}
       <div style={styles.form}>
-        <SectionTitle n="01" title="Personagem" />
-        <div style={styles.chipRow}>
-          {CHARACTERS.map(c => (
-            <Chip key={c.id} active={character === c.id} onClick={() => setCharacter(c.id)}>
-              <span style={{ marginRight: 6 }}>{c.emoji}</span>{c.name}
-            </Chip>
-          ))}
-        </div>
-        {character === 'custom' && (
-          <input
-            value={customChar}
-            onChange={e => setCustomChar(e.target.value)}
-            placeholder="Digite o nome do personagem..."
-            style={styles.input}
-          />
-        )}
+        <SectionTitle n="01" title="Personagem ou Produto" />
+        <input
+          value={characterName}
+          onChange={e => setCharacterName(e.target.value)}
+          placeholder="Insira o nome do personagem ou produto..."
+          style={styles.input}
+        />
 
         <SectionTitle n="02" title="Serviço" />
         <div style={styles.chipRow}>

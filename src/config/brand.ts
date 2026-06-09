@@ -53,7 +53,7 @@ export interface ThemePalette {
 export const BRAND: BrandConfig = {
   appName: 'Hover3D',
   tagline: 'Gerador inteligente de posts',
-  badge: 'Prototype',
+  badge: 'MVP 1.0',
 
   company: {
     name: 'Artemis',
