@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Wand2, RefreshCw } from 'lucide-react'
-import { CHARACTERS, SERVICES, CATEGORIES, OCCASIONS, TONES } from '../data/business'
+import { SERVICES, CATEGORIES, OCCASIONS, TONES } from '../data/business'
 import { generateTemplatePost, createAIPost, GeneratedPost, PostInput } from '../lib/templateEngine'
 import { generateWithAI } from '../lib/api'
 import { saveToHistory, isDuplicate } from '../lib/store'
