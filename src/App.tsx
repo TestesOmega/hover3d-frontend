@@ -9,7 +9,7 @@ import { LoginPage } from './components/LoginPage'
 import { useAuth } from './lib/AuthContext'
 
 // ── Configuração de plano (regra de negócio) ─────────────────
-const AI_ENABLED = true
+const AI_ENABLED = false
 const MAX_CREDITS = 580   // ~R$29/mês com margem de 80% usando Haiku
 
 export default function App() {

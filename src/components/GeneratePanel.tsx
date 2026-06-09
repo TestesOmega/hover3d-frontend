@@ -55,7 +55,8 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
         setGenerating(false)
         return
       } catch {
-        // backend indisponível — cai no template
+        // devolve o crédito se a IA falhar
+        onConsumeCredit()
       }
     }
 
