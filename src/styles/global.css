@@ -1,0 +1,116 @@
+/* ============================================================
+   HOVER3D — Estilos Globais
+   Tema: Midnight + Violet
+   ============================================================ */
+
+:root {
+  --c-bg:           #0D0B14;
+  --c-bg-elevated:  #13101E;
+  --c-bg-subtle:    #1C1829;
+  --c-text:         #EDE9FF;
+  --c-text-muted:   #8B82A8;
+  --c-border:       #2A2240;
+  --c-accent:       #8B5CF6;
+  --c-accent-soft:  #2D1B69;
+  --c-accent-text:  #FFFFFF;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'Outfit', system-ui, sans-serif;
+
+  --radius:    14px;
+  --radius-sm: 9px;
+  --shadow-soft: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-lift: 0 4px 12px rgba(0,0,0,0.4), 0 16px 48px rgba(0,0,0,0.5);
+  --glow-accent: 0 0 24px rgba(139,92,246,0.25);
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--c-bg);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--transition), color var(--transition);
+  line-height: 1.5;
+}
+
+/* Gradiente ambiente sutil no topo */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 480px;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(139,92,246,0.12) 0%, transparent 70%);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, textarea, select {
+  font-family: var(--font-body);
+  color: inherit;
+}
+
+::selection {
+  background: var(--c-accent-soft);
+  color: var(--c-text);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--c-border);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--c-accent-soft); }
+
+/* Animações */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: var(--glow-accent); }
+  50%       { box-shadow: 0 0 40px rgba(139,92,246,0.45); }
+}
+
+.fade-up { animation: fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) both; }
+.fade-in { animation: fadeIn 0.35s ease both; }
+.spin    { animation: spin 0.9s linear infinite; }
+
+button:hover  { filter: brightness(1.08); }
+button:active { transform: translateY(1px); }
+
+/* Foco acessível */
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
