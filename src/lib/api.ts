@@ -40,8 +40,23 @@ export interface Event {
 
 export type EventCreate = Pick<Event, 'title' | 'date' | 'time' | 'location' | 'description'>
 
+import { supabase } from './supabase'
+
+async function getToken(): Promise<string> {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token ?? ''
+}
+
 async function apiFetch(path: string, init?: RequestInit) {
-  const res = await fetch(`${BACKEND_URL}${path}`, init)
+  const token = await getToken()
+  const res = await fetch(`${BACKEND_URL}${path}`, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(init?.headers ?? {}),
+    },
+  })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: 'Erro desconhecido' }))
     throw new Error(err.detail ?? 'Erro na requisição')
@@ -50,10 +65,9 @@ async function apiFetch(path: string, init?: RequestInit) {
   return res.json()
 }
 
-export const getEvents  = ():                Promise<Event[]> => apiFetch('/api/events')
-export const deleteEvent = (id: string):     Promise<null>    => apiFetch(`/api/events/${id}`, { method: 'DELETE' })
-export const createEvent = (ev: EventCreate): Promise<Event>  => apiFetch('/api/events', {
+export const getEvents   = ():                 Promise<Event[]> => apiFetch('/api/events')
+export const deleteEvent = (id: string):       Promise<null>    => apiFetch(`/api/events/${id}`, { method: 'DELETE' })
+export const createEvent = (ev: EventCreate):  Promise<Event>   => apiFetch('/api/events', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(ev),
 })

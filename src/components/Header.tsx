@@ -1,5 +1,6 @@
-import { Sun, Moon, Sparkles } from 'lucide-react'
+import { Sun, Moon, Sparkles, LogOut } from 'lucide-react'
 import { useTheme } from '../lib/ThemeContext'
+import { useAuth } from '../lib/AuthContext'
 import { BRAND } from '../config/brand'
 
 export type Tab = 'gerar' | 'semana' | 'historico' | 'agenda'
@@ -21,6 +22,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export default function Header({ tab, onTabChange, credits, maxCredits, aiEnabled }: HeaderProps) {
   const { mode, toggle } = useTheme()
+  const { signOut } = useAuth()
   const lowCredits = aiEnabled && credits <= maxCredits * 0.15
 
   return (
@@ -66,6 +68,9 @@ export default function Header({ tab, onTabChange, credits, maxCredits, aiEnable
         )}
         <button onClick={toggle} style={styles.themeBtn} title="Alternar tema">
           {mode === 'light' ? <Moon size={17} /> : <Sun size={17} />}
+        </button>
+        <button onClick={signOut} style={styles.themeBtn} title="Sair">
+          <LogOut size={17} />
         </button>
       </div>
     </header>

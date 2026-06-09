@@ -5,14 +5,20 @@ import GeneratePanel from './components/GeneratePanel'
 import WeekPlanner from './components/WeekPlanner'
 import HistoryPanel from './components/HistoryPanel'
 import AgendaPanel from './components/AgendaPanel'
+import { LoginPage } from './components/LoginPage'
+import { useAuth } from './lib/AuthContext'
 
 // ── Configuração de plano (regra de negócio) ─────────────────
 const AI_ENABLED = true
 const MAX_CREDITS = 580   // ~R$29/mês com margem de 80% usando Haiku
 
 export default function App() {
+  const { session, loading } = useAuth()
   const [tab, setTab] = useState<Tab>('gerar')
   const [credits, setCredits] = useState(MAX_CREDITS)
+
+  if (loading) return null
+  if (!session) return <LoginPage />
 
   function consumeCredit(): boolean {
     if (credits <= 0) return false
