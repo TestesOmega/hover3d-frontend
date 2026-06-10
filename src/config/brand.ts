@@ -56,9 +56,9 @@ export const BRAND: BrandConfig = {
   badge: 'MVP 1.0',
 
   company: {
-    name: 'Artemis',
+    name: 'nossa empresa',
     segment: 'Personagens vivos e cerimoniais',
-    region: 'Região',
+    region: 'sua região',
     foundedYearsAgo: undefined,
   },
 
