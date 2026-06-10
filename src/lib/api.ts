@@ -46,7 +46,10 @@ import { supabase } from './supabase'
 
 async function getToken(): Promise<string> {
   const { data } = await supabase.auth.getSession()
-  return data.session?.access_token ?? ''
+  if (!data.session?.access_token) {
+    throw new Error('Sessão expirada. Faça login novamente.')
+  }
+  return data.session.access_token
 }
 
 async function apiFetch(path: string, init?: RequestInit) {

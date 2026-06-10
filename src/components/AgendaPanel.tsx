@@ -84,25 +84,33 @@ export default function AgendaPanel() {
   }
 
   async function handleDelete(id: string) {
+    if (!window.confirm('Tem certeza que deseja excluir este evento?')) return
     try { await deleteEvent(id); setEvents(prev => prev.filter(e => e.id !== id)) }
     catch { setError('Erro ao excluir evento.') }
   }
 
-  function formatDate(d: string) { const [y,m,v] = d.split('-'); return `${v}/${m}/${y}` }
+  function formatDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y}` }
   function formatTime(t: string) { return t.slice(0, 5) }
 
+  // Usa new Date(y, m-1, d) para evitar ambiguidade de timezone
+  function toLocalDate(dateStr: string): Date {
+    const [y, m, d] = dateStr.split('-').map(Number)
+    return new Date(y, m - 1, d)
+  }
+
   function getDayLabel(dateStr: string): { label: string; color: string } | null {
-    const today    = new Date(); today.setHours(0,0,0,0)
-    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1)
-    const evDate   = new Date(dateStr + 'T00:00:00')
-    if (evDate.getTime() === today.getTime())    return { label: 'Hoje',    color: '#8B5CF6' }
+    const now      = new Date(); now.setHours(0, 0, 0, 0)
+    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1)
+    const evDate   = toLocalDate(dateStr)
+    if (evDate.getTime() === now.getTime())      return { label: 'Hoje',    color: '#8B5CF6' }
     if (evDate.getTime() === tomorrow.getTime()) return { label: 'Amanhã',  color: '#6D28D9' }
-    if (evDate < today) return { label: 'Passado', color: '#4B4565' }
+    if (evDate < now) return { label: 'Passado', color: '#4B4565' }
     return null
   }
 
-  const upcomingEvents = events.filter(e => new Date(e.date + 'T00:00:00') >= new Date(new Date().setHours(0,0,0,0)))
-  const pastEvents     = events.filter(e => new Date(e.date + 'T00:00:00') <  new Date(new Date().setHours(0,0,0,0)))
+  const todayStart     = new Date(); todayStart.setHours(0, 0, 0, 0)
+  const upcomingEvents = events.filter(e => toLocalDate(e.date) >= todayStart)
+  const pastEvents     = events.filter(e => toLocalDate(e.date) <  todayStart)
 
   return (
     <div style={styles.wrap}>

@@ -39,10 +39,8 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
     setGenerating(true)
     const input = buildInput()
 
-    // Modo IA: chama o backend
+    // Modo IA: chama o backend — crédito consumido só após sucesso
     if (useAI && aiEnabled) {
-      const ok = onConsumeCredit()
-      if (!ok) { setGenerating(false); return }
       try {
         const text = await generateWithAI({
           character: input.characterName,
@@ -52,14 +50,15 @@ export default function GeneratePanel({ aiEnabled, onConsumeCredit }: GeneratePa
           tone:      input.toneId,
           company:   input.companyName,
         })
+        const ok = onConsumeCredit()
+        if (!ok) { setGenerating(false); return }
         const post = createAIPost(text, input)
         saveToHistory(post)
         setResult(post)
         setGenerating(false)
         return
       } catch {
-        // devolve o crédito se a IA falhar
-        onConsumeCredit()
+        // IA falhou — sem crédito consumido, cai no template abaixo
       }
     }
 

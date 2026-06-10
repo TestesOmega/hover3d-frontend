@@ -20,9 +20,18 @@ export function loadHistory(): GeneratedPost[] {
 export function saveToHistory(post: GeneratedPost) {
   const history = loadHistory()
   history.unshift(post)
-  // mantém os últimos 100
   const trimmed = history.slice(0, 100)
-  try { localStorage.setItem(LS_HISTORY, JSON.stringify(trimmed)) } catch {}
+  try {
+    localStorage.setItem(LS_HISTORY, JSON.stringify(trimmed))
+  } catch (e) {
+    // Se localStorage estiver cheio, limpa e salva só o post novo
+    if (e instanceof DOMException) {
+      try {
+        localStorage.removeItem(LS_HISTORY)
+        localStorage.setItem(LS_HISTORY, JSON.stringify([post]))
+      } catch {}
+    }
+  }
 }
 
 export function clearHistory() {

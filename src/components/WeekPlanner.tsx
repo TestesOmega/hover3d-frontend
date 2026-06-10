@@ -37,6 +37,10 @@ export default function WeekPlanner({ aiEnabled, onConsumeCredit }: WeekPlannerP
     const companyName = company.trim() || undefined
 
     if (aiEnabled) {
+      if (!window.confirm('Gerar a semana completa com IA vai consumir 7 créditos. Continuar?')) {
+        setGenerating(false)
+        return
+      }
       for (let i = 0; i < 7; i++) {
         if (!onConsumeCredit()) { setGenerating(false); return }
       }
