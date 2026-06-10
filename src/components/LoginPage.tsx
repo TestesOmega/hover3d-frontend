@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Turnstile } from '@marsidev/react-turnstile'
 import { supabase } from '../lib/supabase'
 
 export function LoginPage() {
@@ -10,6 +11,7 @@ export function LoginPage() {
   const [success, setSuccess] = useState('')
   const [mouse, setMouse] = useState({ x: 50, y: 50 })
   const [focusedInput, setFocusedInput] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -21,6 +23,10 @@ export function LoginPage() {
 
   const handle = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!turnstileToken) {
+      setError('Verificação de segurança pendente. Aguarde um momento.')
+      return
+    }
     setError('')
     setSuccess('')
     setLoading(true)
@@ -47,6 +53,7 @@ export function LoginPage() {
     setMode(next)
     setError('')
     setSuccess('')
+    setTurnstileToken(null)
   }
 
   const inputStyle = (name: string): React.CSSProperties => ({
@@ -184,7 +191,15 @@ export function LoginPage() {
                 </div>
               )}
 
-              <button type="submit" disabled={loading} style={{
+              <Turnstile
+                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                onSuccess={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+                options={{ theme: 'dark', language: 'pt-BR' }}
+              />
+
+              <button type="submit" disabled={loading || !turnstileToken} style={{
                 marginTop: 4, padding: '13px', borderRadius: 10, border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 background: loading ? 'rgba(124,58,237,0.4)' : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
