@@ -31,7 +31,7 @@ export default function App() {
       .finally(() => setProfileLoading(false))
   }, [session])
 
-  if (loading || profileLoading) return null
+  if (loading || (profileLoading && profile === null)) return null
   if (!session) return <LoginPage />
   if (PAYMENT_GATE && profile && !profile.ativo) return (
     <PaymentGate onActivated={() => setProfile(p => p ? { ...p, ativo: true } : p)} />
