@@ -101,3 +101,16 @@ export const createEvent = (ev: EventCreate):  Promise<Event>   => apiFetch('/ap
   method: 'POST',
   body: JSON.stringify(ev),
 })
+
+// ── Pagamento ─────────────────────────────────────────────────
+
+export interface PaymentData {
+  txid:       string
+  qr_code:    string
+  copy_paste: string
+  amount:     number
+  expires_at: string | null
+}
+
+export const createPayment = (): Promise<PaymentData> =>
+  apiFetch('/api/payment/create', { method: 'POST', body: JSON.stringify({}) })

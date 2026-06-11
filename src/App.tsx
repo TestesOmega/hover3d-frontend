@@ -33,7 +33,9 @@ export default function App() {
 
   if (loading || profileLoading) return null
   if (!session) return <LoginPage />
-  if (PAYMENT_GATE && profile && !profile.ativo) return <PaymentGate />
+  if (PAYMENT_GATE && profile && !profile.ativo) return (
+    <PaymentGate onActivated={() => setProfile(p => p ? { ...p, ativo: true } : p)} />
+  )
 
   function consumeCredit(): boolean {
     if (credits <= 0) return false
