@@ -27,7 +27,7 @@ export default function App() {
     setProfileLoading(true)
     fetchProfile()
       .then(setProfile)
-      .catch(() => setProfile({ ativo: true, plano: 'basico', vencimento: null }))
+      .catch(() => setProfile({ ativo: false, plano: 'basico', vencimento: null }))
       .finally(() => setProfileLoading(false))
   }, [session])
 
