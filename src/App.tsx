@@ -13,7 +13,7 @@ import { fetchProfile, Profile } from './lib/api'
 // ── Configuração de plano (regra de negócio) ─────────────────
 const AI_ENABLED    = false
 const MAX_CREDITS   = 580   // ~R$29/mês com margem de 80% usando Haiku
-const PAYMENT_GATE  = false // ← true para ativar cobrança
+const PAYMENT_GATE  = true // ← true para ativar cobrança
 
 export default function App() {
   const { session, loading } = useAuth()
