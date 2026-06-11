@@ -78,7 +78,7 @@ export default function PaymentGate({ onActivated }: { onActivated: () => void }
             {/* QR Code */}
             <div style={styles.qrWrap}>
               <QRCodeSVG
-                value={payment.qr_code}
+                value={payment.copy_paste}
                 size={180}
                 bgColor="transparent"
                 fgColor="#EDE9FF"
